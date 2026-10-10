@@ -1,0 +1,424 @@
+$ git branch --show-current
+m0-scaffold
+Exit: 0
+
+$ .venv/bin/python -m pip check
+No broken requirements found.
+Exit: 0
+
+$ make test
+.venv/bin/python -m pytest
+..                                                                       [100%]
+2 passed in 0.48s
+Exit: 0
+
+$ make lint
+.venv/bin/ruff check app tests
+All checks passed!
+.venv/bin/ruff format --check app tests
+14 files already formatted
+.venv/bin/mypy
+Success: no issues found in 14 source files
+Exit: 0
+
+$ git add -- .env.example .github .gitignore .pre-commit-config.yaml .python-version Makefile README.md pyproject.toml requirements.lock app tests docs/decisions.md docs/questions.md docs/m0-verification.txt
+Exit: 0
+
+$ git add -- m0-fake-secret.txt
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets
+Detect secrets (NFR-3)...................................................Failed
+- hook id: detect-secrets
+- exit code: 1
+
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: Hex High Entropy String
+Location:    .pre-commit-config.yaml:3
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: AWS Access Key
+Location:    m0-fake-secret.txt:1
+
+Secret Type: Secret Keyword
+Location:    m0-fake-secret.txt:1
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+
+Exit: 1
+
+$ git reset -- m0-fake-secret.txt
+Exit: 0
+
+$ git ls-files -- m0-fake-secret.txt
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets --all-files
+Detect secrets (NFR-3)...................................................Failed
+- hook id: detect-secrets
+- exit code: 1
+
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: Hex High Entropy String
+Location:    .pre-commit-config.yaml:3
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+
+Exit: 1
+
+Rerun after allowlisting the verified public hook SHA only.
+
+$ git branch --show-current
+m0-scaffold
+Exit: 0
+
+$ .venv/bin/python -m pip check
+No broken requirements found.
+Exit: 0
+
+$ make test
+.venv/bin/python -m pytest
+..                                                                       [100%]
+2 passed in 0.44s
+Exit: 0
+
+$ make lint
+.venv/bin/ruff check app tests
+All checks passed!
+.venv/bin/ruff format --check app tests
+14 files already formatted
+.venv/bin/mypy
+Success: no issues found in 14 source files
+Exit: 0
+
+$ git add -- .env.example .github .gitignore .pre-commit-config.yaml .python-version Makefile README.md pyproject.toml requirements.lock app tests docs/decisions.md docs/questions.md docs/m0-verification.txt
+Exit: 0
+
+$ git add -- m0-fake-secret.txt
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets
+Detect secrets (NFR-3)...................................................Failed
+- hook id: detect-secrets
+- exit code: 1
+
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: Hex High Entropy String
+Location:    .pre-commit-config.yaml:3
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: AWS Access Key
+Location:    m0-fake-secret.txt:1
+
+Secret Type: Secret Keyword
+Location:    m0-fake-secret.txt:1
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+
+Exit: 1
+
+$ git reset -- m0-fake-secret.txt
+Exit: 0
+
+$ git ls-files -- m0-fake-secret.txt
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets --all-files
+Detect secrets (NFR-3)...................................................Failed
+- hook id: detect-secrets
+- exit code: 1
+
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: Hex High Entropy String
+Location:    .pre-commit-config.yaml:3
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+
+Exit: 1
+
+Rerun after allowlisting the verified public hook SHA only.
+
+$ git branch --show-current
+m0-scaffold
+Exit: 0
+
+$ .venv/bin/python -m pip check
+No broken requirements found.
+Exit: 0
+
+$ make test
+.venv/bin/python -m pytest
+..                                                                       [100%]
+2 passed in 0.50s
+Exit: 0
+
+$ make lint
+.venv/bin/ruff check app tests
+All checks passed!
+.venv/bin/ruff format --check app tests
+14 files already formatted
+.venv/bin/mypy
+Success: no issues found in 14 source files
+Exit: 0
+
+$ git add -- .env.example .github .gitignore .pre-commit-config.yaml .python-version Makefile README.md pyproject.toml requirements.lock app tests docs/decisions.md docs/questions.md docs/m0-verification.txt
+Exit: 0
+
+$ git add -- m0-fake-secret.txt
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets
+Detect secrets (NFR-3)...................................................Failed
+- hook id: detect-secrets
+- exit code: 1
+
+ERROR: Potential secrets about to be committed to git repo!
+
+Secret Type: AWS Access Key
+Location:    m0-fake-secret.txt:1
+
+Secret Type: Secret Keyword
+Location:    m0-fake-secret.txt:1
+
+Possible mitigations:
+  - For information about putting your secrets in a safer place, please ask in
+    #security
+  - Mark false positives with an inline `pragma: allowlist secret` comment
+
+If a secret has already been committed, visit
+https://help.github.com/articles/removing-sensitive-data-from-a-repository
+
+Exit: 1
+
+$ git reset -- m0-fake-secret.txt
+Exit: 0
+
+$ git ls-files -- m0-fake-secret.txt
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets --all-files
+Detect secrets (NFR-3)...................................................Passed
+Exit: 0
+
+$ git diff --cached --check
+Exit: 0
+
+$ git write-tree
+28aa2356aa3249dbcf91052f8bdfdb5054973dca
+Exit: 0
+
+$ git checkout-index --all --prefix=<clean-snapshot>/
+Exit: 0
+
+$ git init -q
+Exit: 0
+
+$ git add .
+Exit: 0
+
+$ bash -c make setup && make test && make lint
+python3.12 -m venv .venv
+.venv/bin/python -m pip install --no-deps -r requirements.lock
+Collecting annotated-doc==0.0.5 (from -r requirements.lock (line 1))
+  Using cached annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting annotated-types==0.8.0 (from -r requirements.lock (line 2))
+  Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting anyio==4.15.1 (from -r requirements.lock (line 3))
+  Using cached anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting ast_serialize==0.12.1 (from -r requirements.lock (line 4))
+  Using cached ast_serialize-0.12.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.4 kB)
+Collecting certifi==2026.7.22 (from -r requirements.lock (line 5))
+  Using cached certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting cfgv==3.5.0 (from -r requirements.lock (line 6))
+  Using cached cfgv-3.5.0-py2.py3-none-any.whl.metadata (8.9 kB)
+Collecting click==8.5.0 (from -r requirements.lock (line 7))
+  Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting distlib==0.4.3 (from -r requirements.lock (line 8))
+  Using cached distlib-0.4.3-py2.py3-none-any.whl.metadata (5.3 kB)
+Collecting fastapi==0.143.0 (from -r requirements.lock (line 9))
+  Using cached fastapi-0.143.0-py3-none-any.whl.metadata (26 kB)
+Collecting filelock==4.1.0 (from -r requirements.lock (line 10))
+  Using cached filelock-4.1.0-py3-none-any.whl.metadata (2.0 kB)
+Collecting h11==0.16.0 (from -r requirements.lock (line 11))
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting httpcore==1.0.9 (from -r requirements.lock (line 12))
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting httpx==0.28.1 (from -r requirements.lock (line 13))
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting identify==2.6.20 (from -r requirements.lock (line 14))
+  Using cached identify-2.6.20-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting idna==3.20 (from -r requirements.lock (line 15))
+  Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting iniconfig==2.3.1 (from -r requirements.lock (line 16))
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting librt==0.16.0 (from -r requirements.lock (line 17))
+  Using cached librt-0.16.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (1.3 kB)
+Collecting mypy==2.4.0 (from -r requirements.lock (line 18))
+  Using cached mypy-2.4.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting mypy_extensions==1.1.0 (from -r requirements.lock (line 19))
+  Using cached mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+Collecting nodeenv==1.11.0 (from -r requirements.lock (line 20))
+  Using cached nodeenv-1.11.0-py2.py3-none-any.whl.metadata (40 kB)
+Collecting opentelemetry-api==1.45.1 (from -r requirements.lock (line 21))
+  Using cached opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+Collecting packaging==26.3 (from -r requirements.lock (line 22))
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pathspec==1.1.1 (from -r requirements.lock (line 23))
+  Using cached pathspec-1.1.1-py3-none-any.whl.metadata (14 kB)
+Collecting platformdirs==4.12.4 (from -r requirements.lock (line 24))
+  Using cached platformdirs-4.12.4-py3-none-any.whl.metadata (5.5 kB)
+Collecting pluggy==1.6.0 (from -r requirements.lock (line 25))
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pre_commit==4.6.2 (from -r requirements.lock (line 26))
+  Using cached pre_commit-4.6.2-py2.py3-none-any.whl.metadata (1.2 kB)
+Collecting pydantic==2.14.0 (from -r requirements.lock (line 27))
+  Using cached pydantic-2.14.0-py3-none-any.whl.metadata (131 kB)
+Collecting pydantic_core==2.50.0 (from -r requirements.lock (line 28))
+  Using cached pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+Collecting Pygments==2.21.0 (from -r requirements.lock (line 29))
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting pytest==9.1.1 (from -r requirements.lock (line 30))
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting python-discovery==1.6.1 (from -r requirements.lock (line 31))
+  Using cached python_discovery-1.6.1-py3-none-any.whl.metadata (5.1 kB)
+Collecting PyYAML==6.0.3 (from -r requirements.lock (line 32))
+  Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting ruff==0.17.0 (from -r requirements.lock (line 33))
+  Using cached ruff-0.17.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (20 kB)
+Collecting starlette==1.7.0 (from -r requirements.lock (line 34))
+  Using cached starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting typing-inspection==0.4.4 (from -r requirements.lock (line 35))
+  Using cached typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting typing_extensions==4.16.0 (from -r requirements.lock (line 36))
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting uvicorn==0.54.0 (from -r requirements.lock (line 37))
+  Using cached uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting virtualenv==21.14.6 (from -r requirements.lock (line 38))
+  Using cached virtualenv-21.14.6-py3-none-any.whl.metadata (4.1 kB)
+Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Using cached anyio-4.15.1-py3-none-any.whl (132 kB)
+Using cached ast_serialize-0.12.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.3 MB)
+Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)
+Using cached cfgv-3.5.0-py2.py3-none-any.whl (7.4 kB)
+Using cached click-8.5.0-py3-none-any.whl (125 kB)
+Using cached distlib-0.4.3-py2.py3-none-any.whl (470 kB)
+Using cached fastapi-0.143.0-py3-none-any.whl (144 kB)
+Using cached filelock-4.1.0-py3-none-any.whl (133 kB)
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+Using cached identify-2.6.20-py2.py3-none-any.whl (99 kB)
+Using cached idna-3.20-py3-none-any.whl (69 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached librt-0.16.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (531 kB)
+Using cached mypy-2.4.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (15.6 MB)
+Using cached mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+Using cached nodeenv-1.11.0-py2.py3-none-any.whl (34 kB)
+Using cached opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Using cached pathspec-1.1.1-py3-none-any.whl (57 kB)
+Using cached platformdirs-4.12.4-py3-none-any.whl (32 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Using cached pre_commit-4.6.2-py2.py3-none-any.whl (226 kB)
+Using cached pydantic-2.14.0-py3-none-any.whl (487 kB)
+Using cached pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Using cached pytest-9.1.1-py3-none-any.whl (386 kB)
+Using cached python_discovery-1.6.1-py3-none-any.whl (38 kB)
+Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+Using cached ruff-0.17.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.4 MB)
+Using cached starlette-1.7.0-py3-none-any.whl (78 kB)
+Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached uvicorn-0.54.0-py3-none-any.whl (87 kB)
+Using cached virtualenv-21.14.6-py3-none-any.whl (5.5 MB)
+Installing collected packages: distlib, virtualenv, uvicorn, typing-inspection, typing_extensions, starlette, ruff, PyYAML, python-discovery, pytest, Pygments, pydantic_core, pydantic, pre_commit, pluggy, platformdirs, pathspec, packaging, opentelemetry-api, nodeenv, mypy_extensions, mypy, librt, iniconfig, idna, identify, httpx, httpcore, h11, filelock, fastapi, click, cfgv, certifi, ast_serialize, anyio, annotated-types, annotated-doc
+Successfully installed PyYAML-6.0.3 Pygments-2.21.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 ast_serialize-0.12.1 certifi-2026.7.22 cfgv-3.5.0 click-8.5.0 distlib-0.4.3 fastapi-0.143.0 filelock-4.1.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 identify-2.6.20 idna-3.20 iniconfig-2.3.1 librt-0.16.0 mypy-2.4.0 mypy_extensions-1.1.0 nodeenv-1.11.0 opentelemetry-api-1.45.1 packaging-26.3 pathspec-1.1.1 platformdirs-4.12.4 pluggy-1.6.0 pre_commit-4.6.2 pydantic-2.14.0 pydantic_core-2.50.0 pytest-9.1.1 python-discovery-1.6.1 ruff-0.17.0 starlette-1.7.0 typing-inspection-0.4.4 typing_extensions-4.16.0 uvicorn-0.54.0 virtualenv-21.14.6
+.venv/bin/python -m pip check
+No broken requirements found.
+.venv/bin/pre-commit install --install-hooks
+pre-commit installed at .git/hooks/pre-commit
+[INFO] Initializing environment for https://github.com/Yelp/detect-secrets.
+[INFO] Initializing environment for https://github.com/Yelp/detect-secrets:certifi==2026.7.22,charset-normalizer==3.5.2,idna==3.20,PyYAML==6.0.3,requests==2.34.2,urllib3==2.8.0.
+[INFO] Installing environment for https://github.com/Yelp/detect-secrets.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+.venv/bin/python -m pytest
+..                                                                       [100%]
+2 passed in 0.44s
+.venv/bin/ruff check app tests
+All checks passed!
+.venv/bin/ruff format --check app tests
+14 files already formatted
+.venv/bin/mypy
+Success: no issues found in 14 source files
+Exit: 0
+
+$ .venv/bin/pre-commit run detect-secrets --all-files
+Detect secrets (NFR-3)...................................................Passed
+Exit: 0
+
+$ make run; GET http://127.0.0.1:8000/health
+HTTP 200 {"status":"ok"}
+
+.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+INFO:     Started server process [551494]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54988 - "GET /health HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [551494]
+
+Lock comparison: pip freeze equals requirements.lock.
+
+GitHub-hosted CI has not run; the local clean snapshot uses the same commands.
+
+No commits or pushes performed. Fake token reset and removed.

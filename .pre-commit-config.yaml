@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: 68e8b45440415753fff70a312ece8da92ba85b4a # pragma: allowlist secret (verified v1.5.0 SHA)
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets (NFR-3)
+        additional_dependencies:
+          - certifi==2026.7.22
+          - charset-normalizer==3.5.2
+          - idna==3.20
+          - PyYAML==6.0.3
+          - requests==2.34.2
+          - urllib3==2.8.0
