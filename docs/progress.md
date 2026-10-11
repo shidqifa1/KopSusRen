@@ -67,3 +67,25 @@
   mypy no issues in 34 files. No failed slice attempt.
 - Local commit created; no push. No new open questions. Payment/refund behavior
   and fulfillment details remain deferred to unanswered PRD questions.
+
+## Slice 4 — Idempotency and acceptance — 2026-10-11
+
+- Provider-neutral record_inbound_message returns duplicate flag and original ID;
+  duplicate text/customer are unchanged across restarts and simultaneous claims.
+- Combined regression covers BR-1–BR-10, restart close/open ordering, mixed quotas,
+  inactive products, auto-close toggle, and migrated-schema/ORM parity.
+- `make test && make lint`: exit 0; 131 passed in 9.51s; Ruff/mypy passed.
+  Added mixed-quota and schema-parity coverage after final review; reran required
+  checks: exit 0; 136 passed in 9.30s; Ruff passed; 37 files formatted; mypy no
+  issues in 37 files. No failed required slice attempt.
+- Supplemental `.venv/bin/ruff check migrations`: exit 1; one E501 at initial
+  migration line 162. Migration already applied; left unchanged under rule 11.
+  Makefile lint scopes app/tests and passes. This is a known formatting issue.
+- Captured actual acceptance output into docs/m1-demo.cast (asciicast v2) and
+  documented checks in docs/m1-verification.txt. Demo command
+  `.venv/bin/python -m pytest tests/services/test_acceptance.py -v`: exit 0;
+  2 passed in 0.43s. JSON header/event validation passes; player playback unverified.
+- Local slice commit created; no push. All five approved slices implemented.
+- UNVERIFIED: M3 crash-atomic webhook business effects and real messaging;
+  later-milestone LLM/dashboard/deployment; other operating systems.
+- No new questions. All pre-existing PRD [OPEN] items remain unanswered.
