@@ -1,0 +1,13 @@
+{"version": 2, "width": 160, "height": 28, "title": "KopSusRen M1 acceptance regression", "command": ".venv/bin/python -m pytest tests/services/test_acceptance.py -v"}
+[0, "o", "$ .venv/bin/python -m pytest tests/services/test_acceptance.py -v\r\n"]
+[0.884992, "o", "============================= test session starts ==============================\r\n"]
+[0.885078, "o", "platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\r\n"]
+[0.885127, "o", "rootdir: <project>\r\n"]
+[0.885168, "o", "configfile: pyproject.toml\r\n"]
+[0.885207, "o", "plugins: platformdirs-4.12.4, anyio-4.15.1\r\n"]
+[0.885243, "o", "collected 2 items\r\n"]
+[0.885277, "o", "\r\n"]
+[1.249147, "o", "tests/services/test_acceptance.py ..                                     [100%]\r\n"]
+[1.249208, "o", "\r\n"]
+[1.249435, "o", "============================== 2 passed in 0.43s ===============================\r\n"]
+[1.466351, "o", "Exit status: 0\r\n"]
