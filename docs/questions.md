@@ -216,3 +216,71 @@ is needed. Actual rendered-page contrast and UI-1 through UI-8 remain UNVERIFIED
 - UNVERIFIED: rendered UI/security behavior, UI-1 through UI-8 integration,
   browser screenshots, total CSS/JS/HTML sizes and server RAM. Only the downloaded
   upstream HTMX distribution size (51,238 bytes) is measured at this stage.
+
+## M2 planning — 2026-10-11
+
+No code written. Prerequisite verified: migrations/versions/0001_m1_initial_schema.py,
+app/db and app/services are present; make test: 136 passed in 8.66s;
+make lint: Ruff passed, 37 files formatted, mypy passed for 37 source files.
+Owner decisions recorded in D-026 through D-035; do not ask them again.
+UI-01 security mechanisms, UI-04 shared service rule, UI-08 KB units/workload,
+and part of UI-02/UI-03 are now specified by the owner. Their remaining details
+below are still OPEN. UI-6 explicitly allows at most one primary button under
+the current instruction; zero on Orders is allowed. UI-8 is deferred to M3.
+
+- **M2-01 — OPEN — Dashboard service boundary and admin authorization:** Existing
+  mutation services require an exact phone match in owner_numbers; there is no
+  authenticated-admin execution path. Existing services also lack overview/list,
+  customer-history/log/export reads, product deletion, and session edit/delete.
+  May M2 extend app/services with authenticated-admin authorization and missing
+  read/CRUD use cases while reusing M1 domain rules and transactions? How should
+  admin identity be represented in audit actors? Routes must never fake an owner
+  phone number or access ORM/query logic directly. Literal use of only existing
+  M1 service methods cannot cover FR-14/FR-15/FR-17 or even admin authentication.
+- **M2-02 — OPEN — CRUD controls, transitions and copy (remaining UI-03):** Specify
+  product deletion semantics (hard delete versus availability toggle), session
+  editing/deletion permissions and controls, DRAFT scheduling/cancellation
+  actions, and product attachment/removal controls. Specify create/edit submit
+  labels, validation/success/confirmation text, navigation/skip/logout copy and
+  URL mapping not present in UI-UX. No new state transition is proposed.
+- **M2-03 — OPEN — Security policy parameters:** Specify signing-key environment
+  variable name, cookie SameSite value and lifetime, localhost definition,
+  rate-limit attempts/window and trusted per-IP source, username/password
+  validation policy and behavior when create-admin finds an existing account.
+  Specify unauthenticated full-page/HTMX response behavior and CSRF failure copy.
+  Mechanisms in D-026 through D-028 are settled, not being reconsidered.
+- **M2-04 — OPEN — Literal CSS conflicts (remaining UI-10):** The card example uses
+  20px padding outside the spacing scale. Modal shadow/backdrop RGBA colors are
+  outside tokens.css despite the all-colors-as-variables rule. UI-3 restricts
+  backdrop-filter declarations to @supports and .glass-bar/.modal, but the
+  reduced-transparency example sets it outside @supports and on .card. Specify
+  the authoritative compliant declarations/tokens without changing the visual
+  direction. Logo/brand treatment remains explicitly OPEN; optional icons versus
+  logo-only wording is still unresolved if icons are wanted.
+- **M2-05 — OPEN — Remaining overview display details:** For mixed finite and
+  unlimited products, does the aggregate sold numerator include unlimited sales,
+  and what does the aggregate progressbar show (also for zero/all-unlimited quota)?
+  Define most-recent-CLOSED ordering/tie-break, five-latest-order ordering/status
+  scope, and how the required no-OPEN empty state combines with CLOSED metrics
+  and next-SCHEDULED information. The scope and status sets in D-030 are settled.
+- **M2-06 — OPEN — CSV scope and representations (remaining UI-05):** Is export
+  available for all session statuses, and what happens without an Orders session
+  filter? Does export follow the status filter? Specify waktu's source timestamp,
+  nomor_order representation (no separate order-number field exists), status
+  representation (internal value or Indonesian label), and injection prefix.
+  Encoding, delimiter, columns, row granularity and masking are already settled.
+- **M2-07 — OPEN — List/log details and privacy:** Specify default filters and
+  stable ordering, previous/next labels, customer-list and audit/conversation
+  columns, what constitutes a conversation before M3, and whether both Log
+  sections paginate independently. How should E.164 phones be displayed with
+  the first-four/last-three mask example using a domestic prefix? Structured
+  payloads/message text can themselves contain full phones: specify redaction
+  scope for NFR-6. Full phones remain permitted only on explicitly opened
+  customer detail pages. Retention policy remains unspecified.
+
+UI-09 precedence and UI-11 optional rendered-contrast additions remain recorded;
+no new interpretation or contrast pairs were selected. NFR-1 RAM workload is
+still unspecified; binary asset budgets with 50 fake orders do not establish
+512 MB RAM acceptance. PRD Q1/Q3/Q4/Q5/Q6/Q7/Q8 decisions outside the supplied
+M2 fields remain deferred; no provider, payment or structured fulfillment work
+is proposed. UI-06/UI-07 are outside M2.
