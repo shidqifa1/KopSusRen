@@ -22,6 +22,10 @@ def create_db_engine(url: str) -> Engine:
         from sqlalchemy.engine import Connection
 
         assert isinstance(connection, Connection)
-        connection.exec_driver_sql("BEGIN")
+        connection.exec_driver_sql(
+            "BEGIN IMMEDIATE"
+            if connection.get_execution_options().get("sqlite_immediate")
+            else "BEGIN"
+        )
 
     return engine

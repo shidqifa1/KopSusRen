@@ -15,3 +15,17 @@
   slice boundaries are pending human clarification (M1-09 and M1-10).
 - The execution sandbox could not initialize its UID map; required shell
   checks ran with explicit escalation approval.
+
+## Slice 1 — Persistence — 2026-10-11
+
+- Resolved M1-09/M1-10; preserved approved wording in D-008–D-015.
+  Actual checkout ends at D-006; D-007 left unused per supplied numbering.
+- Added nine-table schema, frozen Alembic migration, UTC adapter, connection
+  pragmas and database constraint tests. Pinned SQLAlchemy/Alembic and transitives.
+- Baseline `make setup && make test && make lint`: escalation needed for Git
+  hook installation; exit 0, 2 tests passed, Ruff/mypy passed.
+- Attempt 1 `make test && make lint`: 37 tests passed; lint failed on two
+  overlong lines. Fixed them and Alembic configuration deprecation warning.
+- Attempt 2 `make test && make lint`: exit 0; 37 passed in 2.45s; Ruff passed;
+  24 files formatted; mypy no issues in 24 files.
+- Local commit created; no push. No new open questions.

@@ -150,3 +150,14 @@ Connection hooks enable WAL, foreign keys and a 5000ms busy timeout. No delete
 cascades. Migration schema is frozen independently of current ORM metadata.
 Alternatives: integer affinity alone silently accepts fractions; timezone=True
 alone does not preserve offsets on SQLite. APIs verified against installed source.
+
+## D-017 Lifecycle transactions and tick
+
+One pure transition function owns PRD session edges. Services serialize mutations
+using connection execution options and a BEGIN event hook (BEGIN IMMEDIATE for
+writes, BEGIN for reads) to avoid SQLite legacy transaction behavior. Tick takes
+injected aware time, closes current sessions first, then opens due sessions or
+cancels never-opened expired windows, with audit records. No sleep or background
+scheduler is introduced in M1. Alternatives: implicit driver transactions cannot
+reliably reserve the write lock before quota reads; wall-clock reads prevent
+repeatable restart testing. Order cancellation effects are added in slice 3b.
