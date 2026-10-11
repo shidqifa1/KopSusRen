@@ -201,3 +201,173 @@ Alternative: read-then-insert without reserving the write lock races; catching a
 IntegrityError as a duplicate could hide foreign-key or other data errors.
 This claim alone does not make later business effects crash-atomic; that belongs
 to M3's webhook processing transaction and is not claimed as verified here.
+
+## D-021 UI direction
+
+Use the owner-approved Oat and Sage direction in docs/UI-UX.md, with light mode
+only for v1; dark mode is deferred. This supplies the dashboard/simulator visual
+contract. No alternative palette is selected. Logo/brand treatment remains [OPEN].
+
+## D-022 Vendored, self-hosted HTMX
+
+Pin HTMX **2.0.10**, using its minified distribution served locally from `/static`
+when M2 implements UI assets. HTMX is already mandated by the PRD; it adds partial
+updates to server-rendered Jinja2 without a SPA or new framework. A CDN and an
+unversioned download are rejected by the UI contract. This documentation task
+does not vendor or execute JavaScript and adds no application dependency.
+
+Verified on 2026-10-11 against the official repository:
+
+- [Tag/package metadata](https://github.com/bigskysoftware/htmx/blob/v2.0.10/package.json)
+  declares version 2.0.10 and the 0BSD license.
+- `git ls-remote` resolves `refs/tags/v2.0.10` to
+  `bdc7d7d3e25d0390c7ee11049806e8279b075598`.
+- [Distribution](https://raw.githubusercontent.com/bigskysoftware/htmx/v2.0.10/dist/htmx.min.js):
+  **51,238 bytes**, minified but uncompressed (no gzip/Brotli).
+- SHA-256:
+  `71ea67185bfa8c98c39d31717c6fce5d852370fcdfd129db4543774d3145c0de`.
+
+M2 must retain the upstream license and verify these exact bytes before vendoring.
+Browser compatibility and full-page performance remain UNVERIFIED.
+
+## D-023 Hand-written CSS and system fonts
+
+Use hand-written CSS without a CSS framework, and the specified system font stack:
+`system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif`.
+This follows the approved UI direction and avoids framework assets and font
+downloads on low-end devices. Alternatives such as Bootstrap, Tailwind, web fonts,
+icon fonts and CDN assets are forbidden by the specification. No packages added.
+
+## D-024 UI performance budget [ASSUMPTION]
+
+Adopt the defaults in UI-UX section 10: total uncompressed CSS at most **24 KB**,
+total uncompressed JS at most **70 KB**, HTML per page at most **60 KB**, and one
+inline SVG logo at most **2 KB**. Everything is self-hosted, with no external
+runtime requests; static assets require ETag and Cache-Control; charts use CSS
+bars. These limits support NFR-1 but do not verify the application's 512 MB RAM
+target. Actual CSS/JS/HTML sizes must be measured in M2. Larger asset budgets and
+client-side chart libraries are not adopted. KB units, HTML measurement scope,
+and the logo/icon wording conflict are recorded as questions rather than guessed.
+
+## D-025 Documentation contrast checker
+
+Use Python standard library only to parse UI-UX section 2 tokens and its complete
+contrast contract, rather than duplicate token values or hard-code the pair list.
+The checker uses the [W3C sRGB luminance and contrast formula](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum),
+with the 0.04045 linearization boundary, and compares unrounded ratios. Exit 0
+means every pair passes, exit 1 indicates contrast failures, and exit 2 indicates
+invalid input. Unsupported/transparent contract colors fail parsing rather than
+silently assuming a backdrop. Alternatives: manual estimates are insufficient;
+an external color library is unnecessary. As explicitly requested for this task,
+the source is the document; M2 UI-1 still requires checking actual tokens.css.
+
+## D-026 M2 admin authentication and password hashing
+
+Owner-approved on 2026-10-11: add admin_users in a new Alembic migration;
+never modify the M1 migration. V1 has one admin, created with
+`python -m app.cli create-admin`, prompting interactively for the password.
+Never obtain the password from environment variables, store it in the repo,
+or log it. Use argon2-cffi 25.1.0 (Argon2id), a maintained password-hashing
+library rather than custom hashing. Official documentation verifies
+PasswordHasher.hash, verify (VerifyMismatchError on mismatch), and
+check_needs_rehash. PyPI metadata independently confirms version 25.1.0 and
+Python >=3.8 compatibility. Its default hash memory cost is 64 MiB; application
+RAM acceptance remains unverified. Dependency justification: secure password
+hashing for FR-13/NFR-7. No dependency is installed in this planning task;
+pin direct and transitive versions when implementing slice (a).
+
+Sources: https://argon2-cffi.readthedocs.io/en/stable/howto.html and
+https://pypi.org/pypi/argon2-cffi/25.1.0/json.
+Alternatives: environment-provided passwords and homemade password hashing
+are rejected; multiple dashboard admins are outside v1.
+
+## D-027 M2 signed session cookie
+
+Owner-approved: signed session cookie with HttpOnly and SameSite flags, and
+Secure outside localhost. The signing key must come from an environment
+variable, documented without a default in .env.example during implementation.
+Unsigned cookies and repository/default keys are rejected. Cookie policy
+parameters not supplied by the owner remain questions, not implicit defaults.
+
+## D-028 M2 CSRF and login rate limiting
+
+Owner-approved: CSRF protection on every state-changing form, including HTMX;
+simple in-process login rate limiting per IP. Skipping HTMX forms or adding an
+external limiter service is not adopted. Numeric thresholds and IP trust policy
+remain open. Implement authentication outside routes' business-rule handling.
+
+## D-029 Independent D-022 verification for M2
+
+On 2026-10-11 independently downloaded the official v2.0.10 distribution and
+the npm registry tarball, verified the tarball against registry SHA-512 integrity,
+then compared its package/dist/htmx.min.js bytes with the official distribution.
+Version 2.0.10 exists in both tagged package.json and registry metadata.
+`git ls-remote` again resolves v2.0.10 to
+bdc7d7d3e25d0390c7ee11049806e8279b075598.
+Both distributions are exactly 51,238 bytes with SHA-256
+71ea67185bfa8c98c39d31717c6fce5d852370fcdfd129db4543774d3145c0de.
+All D-022 claims match; no implementation asset was written.
+
+Registry integrity (also independently computed from compressed tarball bytes):
+`sha512-kdeJe7ZVwaS6QMz/ebBIVtZdpwen6L0OQ5GOhPV9MKBb196TCZeZu4yA7ZIQsaLKv7EpXz+So7KSXNuHXhj7Cw==`.
+Sources: https://raw.githubusercontent.com/bigskysoftware/htmx/v2.0.10/dist/htmx.min.js,
+https://registry.npmjs.org/htmx.org/2.0.10 and
+https://registry.npmjs.org/htmx.org/-/htmx.org-2.0.10.tgz.
+Vendor the verified distribution and upstream LICENSE during slice (a), served
+locally with a versioned filename and a test enforcing this SHA-256.
+Alternatives: trusting the prior record alone, a CDN, or modifying upstream
+distribution bytes would lose the independently verified provenance.
+
+## D-030 M2 overview definitions
+
+Owner-approved scope: OPEN session, otherwise most recent CLOSED session,
+otherwise empty state. Order masuk counts CONFIRMED/PAID/FULFILLED orders.
+Pendapatan sums total_idr for PAID/FULFILLED orders. Kuota terjual displays sold
+units against total finite quota; unlimited products display Tanpa batas.
+When no session is OPEN, show the next SCHEDULED session within the session
+card. Different status sets and lifetime aggregates are rejected. Aggregation
+belongs in services, never routes or templates. Mixed-quota/progress details
+not defined by this decision remain open.
+
+## D-031 M2 form fields and destructive dialog buttons
+
+Owner-approved product fields: Nama, Deskripsi, Harga (Rp, integer), Aktif.
+Session fields: Judul, Buka and Tutup (WIB date/time), Catatan pengambilan
+(optional free text), Tutup otomatis saat habis, and products with quota
+(empty means tanpa batas). No structured fulfillment fields are added.
+Dialogs use secondary Batal and the destructive action with .btn-danger.
+Labels and formatting follow UI-UX section 8. Unspecified CRUD controls/copy
+remain questions; no additional transitions are selected.
+
+## D-032 M2 HTMX failure behavior and script allowance
+
+Owner-approved: server returns a .flash-danger partial containing
+Permintaan gagal. Coba lagi. One small inline script, at most 1 KiB, may handle
+dialog open/close and error display; include it in total JS measurements.
+Use native destructive-confirmation dialogs and server-rendered inline banners.
+Floating toasts and additional UI libraries are rejected.
+
+## D-033 M2 CSV format and formula-injection protection
+
+Owner-approved: UTF-8 with BOM, comma delimiter, one row per order item.
+Columns, in order: waktu (WIB), nomor_order, pelanggan (masked phone), produk,
+jumlah, harga_satuan_idr, total_order_idr, status. Money is plain integer rupiah.
+Prefix cells starting with =, +, -, or @ to prevent formula injection, and
+add an explicit FR-17 test. Other delimiters, floats, unmasked phones and one
+row per order are rejected. Export scope and unspecified cell representations
+remain questions.
+
+## D-034 M2 pagination
+
+Owner-approved: 25 rows per page with simple previous/next links, rather than
+infinite scrolling or client-side pagination. Ordering and labels not specified
+in the UI contract remain open.
+
+## D-035 M2 budget units, workload and conformance scope
+
+Owner-approved: KB means 1024 bytes. Measure uncompressed HTML per page with a
+fake workload of 50 orders. Enforce CSS <=24 KiB, JS <=70 KiB (including the
+inline script), HTML <=60 KiB, inline dialog/error script <=1 KiB.
+Implement UI-1 through UI-7 in M2. UI-8 (simulator disabled route returns 404)
+is explicitly deferred to M3; no simulator implementation in M2.
+Alternatives: compressed sizes, decimal KB, or a simulator in M2 are rejected.
