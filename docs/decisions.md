@@ -87,3 +87,66 @@ BR/FR IDs apply when those behaviors are implemented in later milestones.
 Record actual terminal output in docs/m0-verification.txt, redacting home paths
 and usernames. This terminal transcript is the M0 demo artifact approved in the
 plan; no UI screenshot exists because M0 has no dashboard.
+
+## D-008 Approved M1 resolution
+
+Verify branch `m1-domain` and passing `make setup`, `make test`,
+  and `make lint` on the existing M0 scaffold before writing M1 code.
+
+## D-009 Approved M1 resolution
+
+Reject overlapping SCHEDULED windows at scheduling time. Manual
+  opening requires SCHEDULED and no other OPEN session. After downtime, open
+  a due session if its closing time has not passed; otherwise CANCEL it as
+  never opened and write an audit_log entry.
+
+## D-010 Approved M1 resolution
+
+Auto-close for sold-out only if every attached product has a finite
+  quota and all are exhausted; an unlimited product disables this condition.
+  Scheduling requires at least one active product. Inactive products cannot
+  be added; deactivating one in OPEN stops new orders for it only.
+
+## D-011 Approved M1 resolution
+
+Customers may cancel their own DRAFT/CONFIRMED orders only while
+  OPEN. Owners may cancel any order except FULFILLED, releasing quota.
+  CONFIRMED order editing is deferred; cancel and reorder. Cancelling a
+  session cancels all non-FULFILLED orders and flags PAID ones for the owner.
+
+## D-012 Approved M1 resolution
+
+Quota cannot fall below confirmed sold quantity. Products with
+  active orders cannot be removed from a session. `confirm_order` receives
+  the total shown to the customer; a price mismatch rejects confirmation
+  and returns a fresh summary.
+
+## D-013 Approved M1 resolution
+
+Implement provider-neutral `record_inbound_message` returning a
+  `duplicate` flag; M3 connects it to the webhook.
+
+## D-014 Approved M1 resolution
+
+Integer IDs. M1 tables only: products, po_sessions,
+  po_session_products, customers, orders, order_items, owner_numbers,
+  messages, audit_log. Defer conversation_state to M4 and admin_users to M2.
+
+## D-015 Approved M1 resolution
+
+Positive integer quantity per item per order; configurable via
+  `MAX_QTY_PER_ITEM`, default 20. Update BR-10 only in the PRD.
+
+## D-016 Persistence implementation
+
+SQLAlchemy 2.0.54 implements the mandated typed ORM; Alembic 1.20.0 supplies
+versioned schema migrations. Versions verified by pip index and installation.
+Required transitive dependencies greenlet 3.5.6, Mako 1.4.3 and MarkupSafe 3.0.4
+are pinned in requirements.lock. No new optional libraries.
+UTC timestamps use a TypeDecorator normalizing aware inputs and rejecting naive
+inputs; SQLite stores naive UTC and reads restore UTC awareness. SQLite typeof
+CHECKs supplement integer affinity to reject fractional money, quota and quantity.
+Connection hooks enable WAL, foreign keys and a 5000ms busy timeout. No delete
+cascades. Migration schema is frozen independently of current ORM metadata.
+Alternatives: integer affinity alone silently accepts fractions; timezone=True
+alone does not preserve offsets on SQLite. APIs verified against installed source.
