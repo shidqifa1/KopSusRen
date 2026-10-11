@@ -9,10 +9,17 @@ from app.domain.orders import (
     OrderSummary,
     PriceMismatch,
     SummaryItem,
+    transition_order,
     validate_money,
     validate_quantity,
 )
-from app.services.common import sold_quantity, transaction
+from app.services.common import (
+    audit,
+    is_owner,
+    require_owner,
+    sold_quantity,
+    transaction,
+)
 
 
 class OrderService:
@@ -39,6 +46,14 @@ class OrderService:
             order = Order(session_id=current.id, customer_id=customer.id, note=note)
             db.add(order)
             db.flush()
+            if is_owner(db, sender):
+                audit(
+                    db,
+                    sender,
+                    "create_draft",
+                    None,
+                    {"order_id": order.id, "session_id": current.id, "note": note},
+                )
             return order.id
 
     def _own_order(self, db: Session, sender: str, order_id: int) -> Order:
@@ -72,6 +87,7 @@ class OrderService:
                     OrderItem.order_id == order_id, OrderItem.product_id == product_id
                 )
             )
+            before = None if item is None else {"quantity": item.quantity}
             if item is None:
                 db.add(
                     OrderItem(
@@ -80,6 +96,18 @@ class OrderService:
                 )
             else:
                 item.quantity = quantity
+            if is_owner(db, sender):
+                audit(
+                    db,
+                    sender,
+                    "set_item",
+                    before,
+                    {
+                        "order_id": order_id,
+                        "product_id": product_id,
+                        "quantity": quantity,
+                    },
+                )
 
     def remove_item(self, sender: str, order_id: int, product_id: int) -> None:
         with transaction(self.engine) as db:
@@ -91,6 +119,18 @@ class OrderService:
                 )
             )
             if item is not None:
+                if is_owner(db, sender):
+                    audit(
+                        db,
+                        sender,
+                        "remove_item",
+                        {
+                            "order_id": order_id,
+                            "product_id": product_id,
+                            "quantity": item.quantity,
+                        },
+                        None,
+                    )
                 db.delete(item)
 
     def _available(
@@ -168,5 +208,65 @@ class OrderService:
                 item.unit_price_idr = product.price_idr
             order.total_idr = summary.total_idr
             order.status = "CONFIRMED"
+            if is_owner(db, sender):
+                audit(
+                    db,
+                    sender,
+                    "confirm_order",
+                    {"order_id": order_id, "status": "DRAFT"},
+                    {
+                        "order_id": order_id,
+                        "status": order.status,
+                        "total_idr": order.total_idr,
+                    },
+                )
             db.flush()
             return self._summary(db, order)
+
+    def cancel_order(self, sender: str, order_id: int) -> None:
+        with transaction(self.engine) as db:
+            owner = is_owner(db, sender)
+            order = (
+                db.get(Order, order_id)
+                if owner
+                else self._own_order(db, sender, order_id)
+            )
+            if order is None:
+                raise ValueError("Unknown order")
+            current = db.get(POSession, order.session_id)
+            assert current is not None
+            target = transition_order(
+                order.status,
+                "CANCELLED",
+                owner=owner,
+                session_open=current.status == "OPEN",
+            )
+            before = {"order_id": order.id, "status": order.status}
+            order.status = target
+            if owner:
+                audit(
+                    db,
+                    sender,
+                    "cancel_order",
+                    before,
+                    {"order_id": order.id, "status": target},
+                )
+
+    def set_order_status(self, sender: str, order_id: int, target: str) -> None:
+        with transaction(self.engine) as db:
+            require_owner(db, sender)
+            order = db.get(Order, order_id)
+            if order is None:
+                raise ValueError("Unknown order")
+            destination = transition_order(
+                order.status, target, owner=True, session_open=False
+            )
+            before = {"order_id": order.id, "status": order.status}
+            order.status = destination
+            audit(
+                db,
+                sender,
+                "order_status",
+                before,
+                {"order_id": order.id, "status": destination},
+            )

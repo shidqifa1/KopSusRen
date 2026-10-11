@@ -34,3 +34,15 @@ class PriceMismatch(ValueError):
     def __init__(self, summary: OrderSummary) -> None:
         super().__init__("Price changed; show fresh summary before confirming")
         self.summary = summary
+
+
+def transition_order(
+    current: str, target: str, *, owner: bool, session_open: bool
+) -> str:
+    if target == "CANCELLED":
+        allowed = {"DRAFT", "CONFIRMED", "PAID"} if owner else {"DRAFT", "CONFIRMED"}
+        if current in allowed and (owner or session_open):
+            return target
+    elif owner and (current, target) in {("CONFIRMED", "PAID"), ("PAID", "FULFILLED")}:
+        return target
+    raise ValueError(f"Invalid order transition: {current} -> {target}")

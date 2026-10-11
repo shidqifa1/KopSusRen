@@ -49,3 +49,50 @@ def audit(
             payload_json=json.dumps({"before": before, "after": after}),
         )
     )
+
+
+def is_owner(session: Session, sender: str) -> bool:
+    from app.db.models import OwnerNumber
+
+    return (
+        session.scalar(select(OwnerNumber.id).where(OwnerNumber.phone_e164 == sender))
+        is not None
+    )
+
+
+def require_owner(session: Session, sender: str) -> None:
+    if not is_owner(session, sender):
+        raise PermissionError("Sender is not an owner")
+
+
+def cancel_session_orders(session: Session, session_id: int, actor: str) -> None:
+    from app.domain.orders import transition_order
+
+    orders = list(
+        session.scalars(
+            select(Order).where(
+                Order.session_id == session_id,
+                Order.status.not_in(["FULFILLED", "CANCELLED"]),
+            )
+        )
+    )
+    paid_ids = [order.id for order in orders if order.status == "PAID"]
+    for order in orders:
+        before = {"order_id": order.id, "status": order.status}
+        order.status = transition_order(
+            order.status, "CANCELLED", owner=True, session_open=False
+        )
+        audit(
+            session,
+            actor,
+            "session_cancel_order",
+            before,
+            {"order_id": order.id, "status": order.status},
+        )
+    audit(
+        session,
+        actor,
+        "session_cancel_orders",
+        {"session_id": session_id},
+        {"session_id": session_id, "paid_order_ids_need_owner_attention": paid_ids},
+    )

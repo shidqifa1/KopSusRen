@@ -6,7 +6,14 @@ from sqlalchemy.orm import Session
 
 from app.db.models import POSession, Product, SessionProduct
 from app.domain.sessions import transition_session
-from app.services.common import audit, require_utc, sold_quantity, transaction
+from app.services.common import (
+    audit,
+    cancel_session_orders,
+    require_owner,
+    require_utc,
+    sold_quantity,
+    transaction,
+)
 
 
 class SessionService:
@@ -15,6 +22,7 @@ class SessionService:
 
     def change_status(self, session_id: int, target: str, actor: str) -> None:
         with transaction(self.engine) as db:
+            require_owner(db, actor)
             row = db.get(POSession, session_id)
             if row is None:
                 raise ValueError("Unknown session")
@@ -45,6 +53,8 @@ class SessionService:
                 raise ValueError("A session is already OPEN")
         before = {"session_id": row.id, "status": row.status}
         row.status = destination
+        if destination == "CANCELLED":
+            cancel_session_orders(db, row.id, actor)
         audit(
             db,
             actor,

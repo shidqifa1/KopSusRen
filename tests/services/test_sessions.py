@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
-from app.db.models import AuditLog, POSession, Product, SessionProduct
+from app.db.models import AuditLog, OwnerNumber, POSession, Product, SessionProduct
 from app.db.session import create_db_engine
 from app.domain.sessions import EDGES, SessionStatus
 from app.services.sessions import SessionService
@@ -17,6 +17,7 @@ NOW = datetime(2026, 1, 1, tzinfo=UTC)
 def setup_session(db: Engine, status: str = "DRAFT", quota: int | None = 1) -> None:
     with Session(db) as session, session.begin():
         session.add(Product(id=1, name="Fake", price_idr=100))
+        session.add(OwnerNumber(phone_e164="fake-owner"))
         session.add(
             POSession(
                 id=1,
@@ -77,7 +78,8 @@ def test_BR_4_restart_catch_up_is_idempotent(
     with Session(fresh) as session:
         row = session.get(POSession, 1)
         assert row is not None and row.status == expected
-        assert len(list(session.scalars(select(AuditLog)))) == 1
+        logs = list(session.scalars(select(AuditLog)))
+        assert len(logs) == (2 if expected == "CANCELLED" else 1)
     fresh.dispose()
 
 

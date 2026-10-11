@@ -40,3 +40,16 @@
 - Attempt 2 `make test && make lint`: exit 0; 69 passed in 3.63s; Ruff passed;
   29 files formatted; mypy no issues in 29 files.
 - Local commit created; no push. No new open questions.
+
+## Slice 3a — Orders and atomic quota — 2026-10-11
+
+- Persistent drafts, typed summaries, confirmation snapshots, fresh summary on
+  price mismatch, quantity validation via MAX_QTY_PER_ITEM, ownership checks.
+- Verified BEGIN IMMEDIATE emitted before reads and blocks a second sqlite3
+  connection from reserving a write lock before any write occurred.
+- Barrier-released confirmations use separate thread connections; exactly one
+  succeeds for quota 1, sold quantity 1, loser retains unchanged draft/items.
+  Multi-item rollback, repeated confirmation and sold statuses also verified.
+- Attempt 1 `make test && make lint`: exit 0; 85 passed in 4.54s; Ruff passed;
+  32 files formatted; mypy no issues in 32 files.
+- Local commit created; no push. No new open questions.

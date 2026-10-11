@@ -173,3 +173,15 @@ The service reads the approved MAX_QTY_PER_ITEM environment variable (default 20
 or accepts an injected limit for tests. No new PO parameters or fulfillment fields.
 Alternatives: a mutable cached stock counter duplicates sold-order accounting;
 quota is instead summed from CONFIRMED/PAID/FULFILLED rows in the same transaction.
+
+## D-019 Owner actions and cancellation
+
+Authorization queries owner_numbers for the exact sender at execution time;
+no caller-provided role is accepted. Pure order transitions permit the PRD forward
+edges and approved cancellation rules. Session cancellation atomically cancels
+non-fulfilled orders and records PAID order IDs needing owner attention in
+structured audit payloads; no payment/refund behavior is selected (Q4 remains open).
+Every owner mutation records actor, action, before/after and UTC timestamps.
+Product availability and quota edits use the same serialized transaction as orders.
+Alternatives: external notifications would cross the M1 boundary; the durable
+owner-attention audit record can be presented by later dashboard/owner tools.
