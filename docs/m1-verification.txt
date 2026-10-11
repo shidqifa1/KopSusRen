@@ -1,0 +1,29 @@
+M1 slice 4 final required checks — 2026-10-11
+$ make test && make lint
+.venv/bin/python -m pytest
+........................................................................ [ 52%]
+................................................................         [100%]
+136 passed in 9.30s
+.venv/bin/ruff check app tests
+All checks passed!
+.venv/bin/ruff format --check app tests
+37 files already formatted
+.venv/bin/mypy
+Success: no issues found in 37 source files
+
+Supplemental check outside Makefile lint scope:
+$ .venv/bin/ruff check migrations
+E501 Line too long (100 > 88)
+migrations/versions/0001_m1_initial_schema.py:162:89
+Found 1 error.
+The migration is already applied and remains unchanged under project rule 11.
+Required make lint passes; it scopes checks to app and tests.
+
+Demo: m1-demo.cast captures the real acceptance test output with timing.
+Format reference: https://docs.asciinema.org/manual/asciicast/v2/
+No environment values or customer information were captured.
+Playback in an asciicast-compatible player is UNVERIFIED here.
+
+UNVERIFIED: real messaging delivery, crash-atomic webhook business effects,
+LLM integration, dashboard behavior, deployment and other operating systems.
+These are outside M1. No PRD [OPEN] item was decided.

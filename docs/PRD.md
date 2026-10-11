@@ -85,7 +85,7 @@ Status: `DRAFT -> CONFIRMED -> PAID -> FULFILLED`, and `CANCELLED`.
 - **BR-7** A customer may modify or cancel their own order only while the session is OPEN. After close, only the owner can change an order.
 - **BR-8** All timestamps are stored in UTC and shown in Asia/Jakarta.
 - **BR-9** Each inbound WhatsApp message is processed at most once (idempotent by provider message ID).
-- **BR-10** Quantities must be positive integers within a configurable per-order maximum (default 20). \[ASSUMPTION\]
+- **BR-10** Quantity of each item in an order must be a positive integer, at most a configurable maximum per item per order (default 20, env MAX_QTY_PER_ITEM).
 
 ## 5. Functional requirements
 
