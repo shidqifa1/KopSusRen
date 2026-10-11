@@ -88,6 +88,10 @@ Record actual terminal output in docs/m0-verification.txt, redacting home paths
 and usernames. This terminal transcript is the M0 demo artifact approved in the
 plan; no UI screenshot exists because M0 has no dashboard.
 
+## D-007 Intentionally skipped
+
+Intentionally skipped because the approval stated D-007 already existed, so M1 entries began at D-008; no decision was assigned to D-007.
+
 ## D-008 Approved M1 resolution
 
 Verify branch `m1-domain` and passing `make setup`, `make test`,
