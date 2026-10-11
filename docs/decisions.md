@@ -161,3 +161,15 @@ cancels never-opened expired windows, with audit records. No sleep or background
 scheduler is introduced in M1. Alternatives: implicit driver transactions cannot
 reliably reserve the write lock before quota reads; wall-clock reads prevent
 repeatable restart testing. Order cancellation effects are added in slice 3b.
+
+## D-018 Persistent drafts and atomic confirmation
+
+Draft item writes replace the requested per-product quantity; removal is explicit.
+Typed summaries use current product prices for drafts and snapshots after
+confirmation. PriceMismatch carries a fresh summary and rolls back all writes.
+Confirmation reserves SQLite's write lock before reading status, prices or quota;
+repeat confirmation returns stored snapshots without consuming quota again.
+The service reads the approved MAX_QTY_PER_ITEM environment variable (default 20)
+or accepts an injected limit for tests. No new PO parameters or fulfillment fields.
+Alternatives: a mutable cached stock counter duplicates sold-order accounting;
+quota is instead summed from CONFIRMED/PAID/FULFILLED rows in the same transaction.

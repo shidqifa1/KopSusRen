@@ -29,3 +29,14 @@
 - Attempt 2 `make test && make lint`: exit 0; 37 passed in 2.45s; Ruff passed;
   24 files formatted; mypy no issues in 24 files.
 - Local commit created; no push. No new open questions.
+
+## Slice 2 — Session lifecycle — 2026-10-11
+
+- One pure PRD transition function; transactional lifecycle and injected-time
+  idempotent tick, schedule validation, sold-out semantics, restart catch-up.
+- Attempt 1 `make test && make lint`: 19 failed, 50 passed. The unchanged-row
+  assertion incorrectly compared independently generated created/updated times.
+  Corrected the test to compare every persisted column against its prior value.
+- Attempt 2 `make test && make lint`: exit 0; 69 passed in 3.63s; Ruff passed;
+  29 files formatted; mypy no issues in 29 files.
+- Local commit created; no push. No new open questions.
