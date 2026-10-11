@@ -185,3 +185,15 @@ Every owner mutation records actor, action, before/after and UTC timestamps.
 Product availability and quota edits use the same serialized transaction as orders.
 Alternatives: external notifications would cross the M1 boundary; the durable
 owner-attention audit record can be presented by later dashboard/owner tools.
+
+## D-020 Provider-neutral inbound claims and M1 acceptance
+
+record_inbound_message serializes lookup/insert under BEGIN IMMEDIATE and returns
+an immutable result with message ID and duplicate flag. Duplicate IDs retain the
+original text/customer, even after restart or simultaneous delivery. No parsing,
+webhook, provider or response delivery is selected; M3 will connect this primitive.
+Acceptance combines migrated persistence, real services and fake identities.
+Alternative: read-then-insert without reserving the write lock races; catching any
+IntegrityError as a duplicate could hide foreign-key or other data errors.
+This claim alone does not make later business effects crash-atomic; that belongs
+to M3's webhook processing transaction and is not claimed as verified here.

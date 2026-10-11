@@ -53,3 +53,17 @@
 - Attempt 1 `make test && make lint`: exit 0; 85 passed in 4.54s; Ruff passed;
   32 files formatted; mypy no issues in 32 files.
 - Local commit created; no push. No new open questions.
+
+## Slice 3b — Cancellation and owner actions — 2026-10-11
+
+- Added pure order transitions, customer/owner cancellation, forward owner status
+  changes, session cancellation effects, paid-order attention audit payloads.
+- Owner authorization queries owner_numbers at execution; all owner mutations,
+  including customer-order features, audited. Added product/session creation,
+  price/availability edits and quota edits rejecting reductions below sold units.
+- `make test && make lint`: exit 0; 125 passed in 9.79s, Ruff/mypy passed.
+  Review found owner customer-feature mutations also require auditing; added
+  coverage and reran: exit 0; 126 passed in 8.27s; Ruff passed; 34 files formatted;
+  mypy no issues in 34 files. No failed slice attempt.
+- Local commit created; no push. No new open questions. Payment/refund behavior
+  and fulfillment details remain deferred to unanswered PRD questions.

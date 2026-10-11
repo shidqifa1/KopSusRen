@@ -134,3 +134,29 @@ def test_BR_1_manual_open_requires_scheduled_and_no_other_open(db: Engine) -> No
         )
     with pytest.raises(ValueError, match="already OPEN"):
         SessionService(db).change_status(1, "OPEN", "fake-owner")
+
+
+@pytest.mark.parametrize(
+    "extra_quota,active,auto_close,expected",
+    [
+        (None, True, True, "OPEN"),
+        (0, False, True, "CLOSED"),
+        (1, False, True, "OPEN"),
+        (0, True, False, "OPEN"),
+    ],
+)
+def test_BR_4_mixed_quota_activity_and_auto_close(
+    db: Engine, extra_quota: int | None, active: bool, auto_close: bool, expected: str
+) -> None:
+    setup_session(db, "OPEN", quota=0)
+    with Session(db) as session, session.begin():
+        session.add(Product(id=2, name="Fake second", price_idr=100, is_active=active))
+        session.flush()
+        session.add(SessionProduct(session_id=1, product_id=2, quota=extra_quota))
+        current = session.get(POSession, 1)
+        assert current is not None
+        current.auto_close_when_sold_out = auto_close
+    SessionService(db).run_tick(NOW)
+    with Session(db) as session:
+        current = session.get(POSession, 1)
+        assert current is not None and current.status == expected
