@@ -59,3 +59,17 @@ End your response with a report containing:
 2. How it was verified (exact commands and their results).
 3. What is UNVERIFIED.
 4. Any open questions added to `docs/questions.md`.
+
+## UI rules (binding; see docs/UI-UX.md)
+
+- Read docs/UI-UX.md before touching templates, CSS, or JS.
+- Server-rendered Jinja2 + HTMX only. No CSS framework, no JS framework,
+  no icon font, no web fonts, no CDN, no external requests.
+- All colors come from CSS variables in app/web/static/css/tokens.css.
+  No raw hex anywhere else.
+- backdrop-filter only on .glass-bar and .modal (at most 2 elements).
+  Cards never blur.
+- One .btn-primary per page. Sentence-case Bahasa Indonesia copy.
+- Respect the performance budget and report measured sizes.
+- List every deviation from docs/UI-UX.md in your report. Do not
+  improvise visual changes.

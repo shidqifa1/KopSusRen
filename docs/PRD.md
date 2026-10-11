@@ -109,6 +109,8 @@ Status: `DRAFT -> CONFIRMED -> PAID -> FULFILLED`, and `CANCELLED`.
 
 ### 5.3 Web dashboard
 
+Visual design and UI behavior are specified in docs/UI-UX.md, which is binding for UI work.
+
 - **FR-13** Login with username and password (hashed, rate-limited, session cookie with secure flags).
 - **FR-14** Overview page: current/next session, orders count, total revenue (rupiah), per-product sold vs quota.
 - **FR-15** Pages for: Products (CRUD), PO Sessions (CRUD, manual open/close, quota editing), Orders (filter by session/status, change status), Customers (list with order history), Logs (audit log and recent bot conversations).
@@ -116,6 +118,8 @@ Status: `DRAFT -> CONFIRMED -> PAID -> FULFILLED`, and `CANCELLED`.
 - **FR-17** Export orders of a session to CSV.
 
 ### 5.4 Chat simulator (dev and demo)
+
+Visual design and UI behavior are specified in docs/UI-UX.md, which is binding for UI work.
 
 - **FR-18** A built-in web chat simulator implements the same messaging interface as WhatsApp so the whole bot can be developed, tested, and demoed without a real WhatsApp number. It can switch between a customer identity and an owner identity.
 - **FR-19** Demo mode: seed script that creates fake products, sessions, and customers. The public repo contains only fake data.

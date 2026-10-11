@@ -87,3 +87,62 @@ BR/FR IDs apply when those behaviors are implemented in later milestones.
 Record actual terminal output in docs/m0-verification.txt, redacting home paths
 and usernames. This terminal transcript is the M0 demo artifact approved in the
 plan; no UI screenshot exists because M0 has no dashboard.
+
+## D-007 UI direction
+
+Use the owner-approved Oat and Sage direction in docs/UI-UX.md, with light mode
+only for v1; dark mode is deferred. This supplies the dashboard/simulator visual
+contract. No alternative palette is selected. Logo/brand treatment remains [OPEN].
+
+## D-008 Vendored, self-hosted HTMX
+
+Pin HTMX **2.0.10**, using its minified distribution served locally from `/static`
+when M2 implements UI assets. HTMX is already mandated by the PRD; it adds partial
+updates to server-rendered Jinja2 without a SPA or new framework. A CDN and an
+unversioned download are rejected by the UI contract. This documentation task
+does not vendor or execute JavaScript and adds no application dependency.
+
+Verified on 2026-10-11 against the official repository:
+
+- [Tag/package metadata](https://github.com/bigskysoftware/htmx/blob/v2.0.10/package.json)
+  declares version 2.0.10 and the 0BSD license.
+- `git ls-remote` resolves `refs/tags/v2.0.10` to
+  `bdc7d7d3e25d0390c7ee11049806e8279b075598`.
+- [Distribution](https://raw.githubusercontent.com/bigskysoftware/htmx/v2.0.10/dist/htmx.min.js):
+  **51,238 bytes**, minified but uncompressed (no gzip/Brotli).
+- SHA-256:
+  `71ea67185bfa8c98c39d31717c6fce5d852370fcdfd129db4543774d3145c0de`.
+
+M2 must retain the upstream license and verify these exact bytes before vendoring.
+Browser compatibility and full-page performance remain UNVERIFIED.
+
+## D-009 Hand-written CSS and system fonts
+
+Use hand-written CSS without a CSS framework, and the specified system font stack:
+`system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif`.
+This follows the approved UI direction and avoids framework assets and font
+downloads on low-end devices. Alternatives such as Bootstrap, Tailwind, web fonts,
+icon fonts and CDN assets are forbidden by the specification. No packages added.
+
+## D-010 UI performance budget [ASSUMPTION]
+
+Adopt the defaults in UI-UX section 10: total uncompressed CSS at most **24 KB**,
+total uncompressed JS at most **70 KB**, HTML per page at most **60 KB**, and one
+inline SVG logo at most **2 KB**. Everything is self-hosted, with no external
+runtime requests; static assets require ETag and Cache-Control; charts use CSS
+bars. These limits support NFR-1 but do not verify the application's 512 MB RAM
+target. Actual CSS/JS/HTML sizes must be measured in M2. Larger asset budgets and
+client-side chart libraries are not adopted. KB units, HTML measurement scope,
+and the logo/icon wording conflict are recorded as questions rather than guessed.
+
+## D-011 Documentation contrast checker
+
+Use Python standard library only to parse UI-UX section 2 tokens and its complete
+contrast contract, rather than duplicate token values or hard-code the pair list.
+The checker uses the [W3C sRGB luminance and contrast formula](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum),
+with the 0.04045 linearization boundary, and compares unrounded ratios. Exit 0
+means every pair passes, exit 1 indicates contrast failures, and exit 2 indicates
+invalid input. Unsupported/transparent contract colors fail parsing rather than
+silently assuming a backdrop. Alternatives: manual estimates are insufficient;
+an external color library is unnecessary. As explicitly requested for this task,
+the source is the document; M2 UI-1 still requires checking actual tokens.css.
